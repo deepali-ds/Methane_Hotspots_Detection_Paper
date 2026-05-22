@@ -1,19 +1,19 @@
-// =============================
+
 // HEX GRID (CHANGE PER COUNTRY)
-// =============================
+
 var hexGrid = ee.FeatureCollection(
   'projects/ee-deepalibidwai/assets/spain_h3_res6'
 );
 
-// =============================
+
 // YEARS
-// =============================
+
 var years = [2021, 2022, 2023, 2024, 2025];
 
 
-// =============================
-// EMPTY IMAGE HELPERS (DO NOT TOUCH)
-// =============================
+
+// EMPTY IMAGE HELPERS 
+
 function emptyCH4() {
   return ee.Image.constant([0, 1, 0, 0])
     .rename(['CH4_mean','CH4_std','CH4_zscore','CH4_persistence']);
@@ -30,9 +30,9 @@ function emptyWind() {
 }
 
 
-// =============================
-// CH4 MODULE (UNCHANGED LOGIC)
-// =============================
+
+// CH4 features
+
 function getCH4(start, end, geom) {
 
   var col = ee.ImageCollection('COPERNICUS/S5P/OFFL/L3_CH4')
@@ -79,9 +79,9 @@ function getCH4(start, end, geom) {
 }
 
 
-// =============================
-// SENTINEL-2 (UNCHANGED LOGIC)
-// =============================
+
+// SENTINEL-2 features
+
 function getS2(start, end, geom) {
 
   var s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -124,9 +124,9 @@ function getS2(start, end, geom) {
 }
 
 
-// =============================
-// WIND (YOUR VERSION — UNCHANGED)
-// =============================
+
+// WIND features
+
 function getWind(start, end) {
 
   var col = ee.ImageCollection('ECMWF/ERA5_LAND/HOURLY')
@@ -155,9 +155,9 @@ function getWind(start, end) {
 }
 
 
-// =============================
+
 // STATIC FEATURES
-// =============================
+
 var dem = ee.Image('USGS/SRTMGL1_003');
 var elevation = dem.rename('elevation');
 var slope = ee.Terrain.slope(dem).rename('slope');
@@ -172,9 +172,9 @@ var infra_distance = infraRaster.fastDistanceTransform()
   .rename('infra_distance');
 
 
-// =============================
-// EXPECTED BANDS (DO NOT CHANGE)
-// =============================
+
+// EXPECTED BANDS 
+
 var expectedBands = [
   'CH4_mean','CH4_std','CH4_zscore','CH4_persistence',
   'NDVI','NDWI','NDMI','NDBI','BSI',
@@ -183,9 +183,9 @@ var expectedBands = [
 ];
 
 
-// =============================
+
 // FEATURE BUILDER
-// =============================
+
 function buildFeatures(start, end) {
 
   var ch4 = getCH4(start, end, hexGrid);
@@ -201,7 +201,7 @@ function buildFeatures(start, end) {
     infra_distance
   ]);
 
-  // 🔴 HARD FIX: FORCE IDENTICAL SCHEMA
+  //  HARD FIX: FORCE IDENTICAL SCHEMA
   var template = ee.Image.constant([
     0,1,0,0,
     0,0,0,0,0,
@@ -230,9 +230,9 @@ function buildFeatures(start, end) {
 }
 
 
-// =============================
-// EXPORT LOOP (FINAL)
-// =============================
+
+// EXPORT LOOP 
+
 for (var i = 0; i < years.length; i++) {
 
   var y = years[i];
